@@ -34,3 +34,14 @@
  - localhost:8888/eureka-client/default откроет файл с настройками в браузере
     файл eureka-client.properties из приватного репозитория
     P.S. вместо default можно указывать названия profile, если конфигов несколько (дев, прод)
+
+
+### Spring Boot actuator
+- включаем actuator
+    management.endpoint.gateway.enabled=true
+- какие endpoints хотим включить
+management.endpoint.web.exposure.include=*
+- добавляем зависимость
+  implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+Из интересного: с помощью этого инструмента можно посмотреть метрики, бины в контексте, роуты и др
