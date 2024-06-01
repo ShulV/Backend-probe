@@ -62,6 +62,12 @@ public class CategoryController {
             return new ResponseEntity("missed param: title MUST be not null", HttpStatus.NOT_ACCEPTABLE);
         }
 
+
+        //todo временная логика (не проверяем сущестование пользователя-------------------------------------------------------
+        return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
+        //todo временная логика-------------------------------------------------------
+
+
         // если такой пользователь существует
 //        if (userWebClientBuilder.userExists(category.getUserId())) { // вызываем микросервис из другого модуля
 ////            return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
@@ -84,7 +90,7 @@ public class CategoryController {
 //        }
 
         // если пользователя НЕ существует
-        return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+//        return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
 
     }
 
