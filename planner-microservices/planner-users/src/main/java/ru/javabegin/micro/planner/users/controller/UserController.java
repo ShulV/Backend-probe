@@ -23,7 +23,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
-import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
+//import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
@@ -39,18 +39,20 @@ public class UserController {
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
     // микросервисы для работы с пользователями
-    private UserWebClientBuilder userWebClientBuilder;
+//    private UserWebClientBuilder userWebClientBuilder;
 
     // для отправки сообщения по требованию (реализовано с помощью функц. кода)
-    private final MessageFuncActions messageFuncActions;
+//    private final MessageFuncActions messageFuncActions;
 
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public UserController(UserService userService, UserWebClientBuilder userWebClientBuilder, MessageFuncActions messageFuncActions) {
+    public UserController(UserService userService
+//            , UserWebClientBuilder userWebClientBuilder, MessageFuncActions messageFuncActions
+    ) {
         this.userService = userService;
-        this.userWebClientBuilder = userWebClientBuilder;
-        this.messageFuncActions = messageFuncActions;
+//        this.userWebClientBuilder = userWebClientBuilder;
+//        this.messageFuncActions = messageFuncActions;
     }
 
 
@@ -88,7 +90,7 @@ public class UserController {
 //            );
 //        }
 
-        messageFuncActions.sendNewUserMessage(user.getId());
+//        messageFuncActions.sendNewUserMessage(user.getId());
 
         return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
 
