@@ -81,11 +81,15 @@ public class PriorityController {
 
 
         // если такой пользователь существует
-        if (userWebClientBuilder.userExists(priority.getUserId())) { // вызываем микросервис из другого модуля
-            return ResponseEntity.ok(service.add(priority)); // возвращаем добавленный объект с заполненным ID
-        }
+//        if (userWebClientBuilder.userExists(priority.getUserId())) { // вызываем микросервис из другого модуля
+//            return ResponseEntity.ok(service.add(priority)); // возвращаем добавленный объект с заполненным ID
+//        }
 
-        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        //TODO временный код без проверки на сущ юзера-------------------------------------------------------
+        return ResponseEntity.ok(service.add(priority));
+        //TODO-----------------------------------------------------------------------------------------------
+
+//        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
 

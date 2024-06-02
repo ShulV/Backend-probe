@@ -76,12 +76,18 @@ public class TaskController {
             return new ResponseEntity("missed param: title", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // если такой пользователь существует
-        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
-            return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
-        }
+//        // если такой пользователь существует
+//        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
+//            return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
+//        }
 
-        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+
+        //TODO временная логика без проверки user_id -----------------------------------------------------
+        return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
+        //TODO--------------------------------------------------------------------------------------------
+
+
+//        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
 
 
 
