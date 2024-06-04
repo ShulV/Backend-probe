@@ -40,6 +40,7 @@ public class PriorityController {
 
     // доступ к данным из БД
     private final PriorityService service;
+    private final PriorityService priorityService;
 
     // микросервисы для работы с пользователями
     private UserRestBuilder userRestBuilder;
@@ -47,10 +48,11 @@ public class PriorityController {
 
     // автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public PriorityController(PriorityService service, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder) {
+    public PriorityController(PriorityService service, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder, PriorityService priorityService) {
         this.service = service;
         this.userRestBuilder = userRestBuilder;
         this.userWebClientBuilder = userWebClientBuilder;
+        this.priorityService = priorityService;
     }
 
 
@@ -79,17 +81,16 @@ public class PriorityController {
             return new ResponseEntity("missed param: color", HttpStatus.NOT_ACCEPTABLE);
         }
 
-
+        // если такой пользователь существует
+        if (userWebClientBuilder.userExists(priority.getUserId())) { // вызываем микросервис из другого модуля
+            return ResponseEntity.ok(priorityService.add(priority)); // возвращаем добавленный объект с заполненным ID
+        }
         // если такой пользователь существует
 //        if (userWebClientBuilder.userExists(priority.getUserId())) { // вызываем микросервис из другого модуля
 //            return ResponseEntity.ok(service.add(priority)); // возвращаем добавленный объект с заполненным ID
 //        }
 
-        //TODO временный код без проверки на сущ юзера-------------------------------------------------------
-        return ResponseEntity.ok(service.add(priority));
-        //TODO-----------------------------------------------------------------------------------------------
-
-//        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+        return new ResponseEntity("user id=" + priority.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
 
