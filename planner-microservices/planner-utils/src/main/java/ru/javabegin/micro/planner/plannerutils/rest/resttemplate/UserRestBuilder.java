@@ -29,7 +29,7 @@ public class UserRestBuilder {
         try {
 
             // вызов сервисы
-            response = restTemplate.exchange(baseUrl+"/id", HttpMethod.POST, request, User.class);
+            response = restTemplate.exchange(baseUrl + "/id", HttpMethod.POST, request, User.class);
 
             if (response.getStatusCode() == HttpStatus.OK) { // если статус был 200
                 return true;

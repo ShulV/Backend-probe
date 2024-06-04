@@ -32,7 +32,7 @@ dependencies {
     // обязательно должна быть именно библиотека с netflix в названии (иначе проект может не запуститься)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:+'
 
-    // Дравйвер БД
+    // Драйвер БД
     runtimeOnly 'org.postgresql:postgresql'
 
     // lombok
