@@ -39,7 +39,7 @@ public class UserController {
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
     // микросервисы для работы с пользователями
-//    private UserWebClientBuilder userWebClientBuilder;
+    private final UserWebClientBuilder userWebClientBuilder;
 
     // для отправки сообщения по требованию (реализовано с помощью функц. кода)
 //    private final MessageFuncActions messageFuncActions;
@@ -48,10 +48,11 @@ public class UserController {
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
     public UserController(UserService userService
-//            , UserWebClientBuilder userWebClientBuilder, MessageFuncActions messageFuncActions
+            , UserWebClientBuilder userWebClientBuilder
+//            , MessageFuncActions messageFuncActions
     ) {
         this.userService = userService;
-//        this.userWebClientBuilder = userWebClientBuilder;
+        this.userWebClientBuilder = userWebClientBuilder;
 //        this.messageFuncActions = messageFuncActions;
     }
 
@@ -82,20 +83,46 @@ public class UserController {
         // добавляем пользователя
         user = userService.add(user);
 
-//        if (user != null) {
-//            // заполняем начальные данные пользователя (в параллелном потоке)
-//            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
-//                        System.out.println("user populated: " + result);
-//                    }
-//            );
-//        }
-
 //        messageFuncActions.sendNewUserMessage(user.getId());
 
         return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
 
     }
 
+    @PostMapping("/add-with-test-data")
+    public ResponseEntity<User> addWithInitData(@RequestBody User user) {
+        // проверка на обязательные параметры
+        if (user.getId() != null && user.getId() != 0) {
+            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
+            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // если передали пустое значение
+        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+            return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        // добавляем пользователя
+        user = userService.add(user);
+
+        if (user != null) {
+            // заполняем начальные данные пользователя (в параллелном потоке)
+            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
+                        System.out.println("user populated: " + result);
+                    }
+            );
+        }
+        
+        return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
+    }
 
     // обновление
     @PutMapping("/update")
