@@ -7,6 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import ru.javabegin.micro.planner.entity.User;
 
+//fallback - если сервис не доступен, если метод не выполнится, то выполняем свой
 @FeignClient(name = "planner-users", fallback = UserFeignClientFallback.class)
 public interface UserFeignClient {
 
