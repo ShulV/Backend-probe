@@ -9,7 +9,7 @@ import ru.javabegin.micro.planner.entity.Category;
 import ru.javabegin.micro.planner.entity.User;
 //import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
-//import ru.javabegin.micro.planner.todo.feign.UserFeignClient;
+import ru.javabegin.micro.planner.todo.feign.UserFeignClient;
 import ru.javabegin.micro.planner.todo.search.CategorySearchValues;
 import ru.javabegin.micro.planner.todo.service.CategoryService;
 
@@ -25,23 +25,22 @@ public class CategoryController {
 
     // микросервисы для работы с пользователями
 //    private final UserRestBuilder userRestBuilder;
-    private final UserWebClientBuilder userWebClientBuilder;
+//    private final UserWebClientBuilder userWebClientBuilder;
     // клиет для вызова мс
-//    private  @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient")UserFeignClient userFeignClient;
+    private  @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient") UserFeignClient userFeignClient;
 
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
     public CategoryController(CategoryService categoryService
 //            , UserRestBuilder userRestBuilder
-            , UserWebClientBuilder userWebClientBuilder
-//            ,
-//                              @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient") UserFeignClient userFeignClient
+//            , UserWebClientBuilder userWebClientBuilder
+            ,@Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient") UserFeignClient userFeignClient
     ) {
         this.categoryService = categoryService;
 //        this.userRestBuilder = userRestBuilder;
-        this.userWebClientBuilder = userWebClientBuilder;
-//        this.userFeignClient = userFeignClient;
+//        this.userWebClientBuilder = userWebClientBuilder;
+        this.userFeignClient = userFeignClient;
     }
 
     @PostMapping("/all")
@@ -64,26 +63,26 @@ public class CategoryController {
             return new ResponseEntity("missed param: title MUST be not null", HttpStatus.NOT_ACCEPTABLE);
         }
 
-        // если такой пользователь существует
-        if (userWebClientBuilder.userExists(category.getUserId())) { // вызываем микросервис из другого модуля
-            return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
-        }
+//        // если такой пользователь существует
+//        if (userWebClientBuilder.userExists(category.getUserId())) { // вызываем микросервис из другого модуля
+//            return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
+//        }
 
 //        // подписываемся на результат (асинхронность тут не нужна, для пробы)
 //        userWebClientBuilder.userExistsAsync(category.getUserId()).subscribe(user -> System.out.println("user = " + user));
 
-            // вызов мс через feign интерфейс
+        // вызов мс через feign интерфейс
 
-//        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
-//        System.out.println(result);
-//
-//        if (result == null){ // если мс недоступен - вернется null
-//            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
-//        }
-//
-//        if (result.getBody() != null){ // если пользователь не пустой
-//            return ResponseEntity.ok(categoryService.add(category));
-//        }
+        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
+        System.out.println(result);
+
+        if (result == null){ // если мс недоступен - вернется null
+            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
+        }
+
+        if (result.getBody() != null){ // если пользователь не пустой
+            return ResponseEntity.ok(categoryService.add(category));
+        }
 
         // если пользователя НЕ существует
         return new ResponseEntity("user id=" + category.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
