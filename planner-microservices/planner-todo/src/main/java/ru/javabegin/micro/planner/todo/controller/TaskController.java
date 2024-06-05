@@ -8,7 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Task;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
+//import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 import ru.javabegin.micro.planner.todo.search.TaskSearchValues;
 import ru.javabegin.micro.planner.todo.service.TaskService;
@@ -42,15 +42,17 @@ public class TaskController {
     private final TaskService taskService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
     // микросервисы для работы с пользователями
-    private UserRestBuilder userRestBuilder;
+//    private UserRestBuilder userRestBuilder;
     private final UserWebClientBuilder userWebClientBuilder;
 
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public TaskController(TaskService taskService, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder) {
+    public TaskController(TaskService taskService
+//            , UserRestBuilder userRestBuilder
+            , UserWebClientBuilder userWebClientBuilder) {
         this.taskService = taskService;
-        this.userRestBuilder = userRestBuilder;
+//        this.userRestBuilder = userRestBuilder;
         this.userWebClientBuilder = userWebClientBuilder;
     }
 

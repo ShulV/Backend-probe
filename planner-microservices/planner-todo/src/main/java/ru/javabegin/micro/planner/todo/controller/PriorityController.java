@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Priority;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
+//import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 import ru.javabegin.micro.planner.todo.search.PrioritySearchValues;
 import ru.javabegin.micro.planner.todo.service.PriorityService;
@@ -43,14 +43,16 @@ public class PriorityController {
     private final PriorityService priorityService;
 
     // микросервисы для работы с пользователями
-    private UserRestBuilder userRestBuilder;
+//    private UserRestBuilder userRestBuilder;
     private final UserWebClientBuilder userWebClientBuilder;
 
     // автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public PriorityController(PriorityService service, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder, PriorityService priorityService) {
+    public PriorityController(PriorityService service
+//            , UserRestBuilder userRestBuilder
+            , UserWebClientBuilder userWebClientBuilder, PriorityService priorityService) {
         this.service = service;
-        this.userRestBuilder = userRestBuilder;
+//        this.userRestBuilder = userRestBuilder;
         this.userWebClientBuilder = userWebClientBuilder;
         this.priorityService = priorityService;
     }

@@ -7,7 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Category;
 import ru.javabegin.micro.planner.entity.User;
-import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
+//import ru.javabegin.micro.planner.plannerutils.rest.resttemplate.UserRestBuilder;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 //import ru.javabegin.micro.planner.todo.feign.UserFeignClient;
 import ru.javabegin.micro.planner.todo.search.CategorySearchValues;
@@ -24,7 +24,7 @@ public class CategoryController {
     private final CategoryService categoryService;
 
     // микросервисы для работы с пользователями
-    private final UserRestBuilder userRestBuilder;
+//    private final UserRestBuilder userRestBuilder;
     private final UserWebClientBuilder userWebClientBuilder;
     // клиет для вызова мс
 //    private  @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient")UserFeignClient userFeignClient;
@@ -32,12 +32,14 @@ public class CategoryController {
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public CategoryController(CategoryService categoryService, UserRestBuilder userRestBuilder, UserWebClientBuilder userWebClientBuilder
+    public CategoryController(CategoryService categoryService
+//            , UserRestBuilder userRestBuilder
+            , UserWebClientBuilder userWebClientBuilder
 //            ,
 //                              @Qualifier("ru.javabegin.micro.planner.todo.feign.UserFeignClient") UserFeignClient userFeignClient
     ) {
         this.categoryService = categoryService;
-        this.userRestBuilder = userRestBuilder;
+//        this.userRestBuilder = userRestBuilder;
         this.userWebClientBuilder = userWebClientBuilder;
 //        this.userFeignClient = userFeignClient;
     }
@@ -67,7 +69,7 @@ public class CategoryController {
             return ResponseEntity.ok(categoryService.add(category)); // возвращаем добавленный объект с заполненным ID
         }
 
-//        // подписываемся на результат
+//        // подписываемся на результат (асинхронность тут не нужна, для пробы)
 //        userWebClientBuilder.userExistsAsync(category.getUserId()).subscribe(user -> System.out.println("user = " + user));
 
             // вызов мс через feign интерфейс
