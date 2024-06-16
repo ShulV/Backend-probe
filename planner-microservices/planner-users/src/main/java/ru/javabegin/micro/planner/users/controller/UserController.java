@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
 import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
 //import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
+import ru.javabegin.micro.planner.users.mq.legacy.MessageProducer;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
@@ -39,21 +40,24 @@ public class UserController {
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
     // микросервисы для работы с пользователями
-    private final UserWebClientBuilder userWebClientBuilder;
+//    private final UserWebClientBuilder userWebClientBuilder;
 
     // для отправки сообщения по требованию (реализовано с помощью функц. кода)
 //    private final MessageFuncActions messageFuncActions;
 
+    //для легаси отправки сообщений
+    private final MessageProducer messageProducer;
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public UserController(UserService userService
-            , UserWebClientBuilder userWebClientBuilder
+    public UserController(UserService userService, MessageProducer messageProducer
+//            , UserWebClientBuilder userWebClientBuilder
 //            , MessageFuncActions messageFuncActions
     ) {
         this.userService = userService;
-        this.userWebClientBuilder = userWebClientBuilder;
+//        this.userWebClientBuilder = userWebClientBuilder;
 //        this.messageFuncActions = messageFuncActions;
+        this.messageProducer = messageProducer;
     }
 
 
@@ -83,10 +87,7 @@ public class UserController {
         // добавляем пользователя
         user = userService.add(user);
 
-//        messageFuncActions.sendNewUserMessage(user.getId());
-
         return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
-
     }
 
     @PostMapping("/add-with-test-data")
@@ -114,13 +115,15 @@ public class UserController {
         user = userService.add(user);
 
         if (user != null) {
-            // заполняем начальные данные пользователя (в параллелном потоке)
-            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
-                        System.out.println("user populated: " + result);
-                    }
-            );
+            messageProducer.newUserAction(user.getId());
+
+            //заполняем начальные данные пользователя (в параллелном потоке)
+//            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
+//                        System.out.println("user populated: " + result);
+//                    }
+//            );
         }
-        
+
         return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
     }
 
