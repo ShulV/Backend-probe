@@ -15,7 +15,10 @@ public class MessageConsumer {
     }
 
     @StreamListener(target = TodoBinding.INPUT_CHANNEL)
-    public void initTestData(Long userId) {
+    public void initTestData(Long userId) throws Exception {
+        if (userId % 2 == 0) {
+            throw new Exception("dead letter queue test exception...");
+        }
         testDataService.initTestData(userId);
     }
 }
