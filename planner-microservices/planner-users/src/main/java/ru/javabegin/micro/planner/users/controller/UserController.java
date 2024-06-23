@@ -22,9 +22,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
-import ru.javabegin.micro.planner.plannerutils.rest.webclient.UserWebClientBuilder;
-//import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
-import ru.javabegin.micro.planner.users.mq.legacy.MessageProducer;
+import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
@@ -43,21 +41,22 @@ public class UserController {
 //    private final UserWebClientBuilder userWebClientBuilder;
 
     // для отправки сообщения по требованию (реализовано с помощью функц. кода)
-//    private final MessageFuncActions messageFuncActions;
+    private final MessageFuncActions messageFuncActions;
 
     //для легаси отправки сообщений
-    private final MessageProducer messageProducer;
+//    private final MessageProducer messageProducer;
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public UserController(UserService userService, MessageProducer messageProducer
+    public UserController(UserService userService
+//            , MessageProducer messageProducer
 //            , UserWebClientBuilder userWebClientBuilder
-//            , MessageFuncActions messageFuncActions
+            , MessageFuncActions messageFuncActions
     ) {
         this.userService = userService;
 //        this.userWebClientBuilder = userWebClientBuilder;
-//        this.messageFuncActions = messageFuncActions;
-        this.messageProducer = messageProducer;
+        this.messageFuncActions = messageFuncActions;
+//        this.messageProducer = messageProducer;
     }
 
 
@@ -115,7 +114,11 @@ public class UserController {
         user = userService.add(user);
 
         if (user != null) {
-            messageProducer.newUserAction(user.getId());
+            // Функ отправка в очередь
+            messageFuncActions.sendNewUserMessage(user.getId());
+
+            // Legacy отправка в очередь
+//            messageProducer.newUserAction(user.getId());
 
             //заполняем начальные данные пользователя (в параллелном потоке)
 //            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
