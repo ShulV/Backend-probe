@@ -25,4 +25,44 @@ management.endpoints.web.exposure.include=*
 
 ---
 
-##
+## Kafka
+
+Нужно сначала установить kafka, настроить переменные среды (если винда), пути до zookeeper и server
+
+Удобный запуск zookeeper и kafka server:
+на винде можно создать такой батник
+```shell
+start zookeeper-server-start C:\Users\vshul\Progr\kafka\config\zookeeper.properties
+timeout 10
+start kafka-server-start C:\Users\vshul\Progr\kafka\config\server.properties
+```
+
+Создание топика из консоли
+```shell
+kafka-topics --create --topic javabegin-topic --bootstrap-server localhost:9092 
+```
+
+Посмотреть топики
+```shell
+kafka-topics --list --bootstrap-server localhost:9092 
+```
+
+Отправка сообщений через консоль
+```shell
+C:\Users\vshul>kafka-console-producer --topic quickstart-events --bootstrap-server localhost:9092                       
+>my first kafka message from Vitya!!!                                                                                   
+>my second message...                                                                                                   
+>three                                                                                                                  
+> 
+```
+
+Получение сообщений через консоль
+```shell
+C:\Users\vshul>kafka-console-consumer --topic quickstart-events --from-beginning --bootstrap-server localhost:9092      
+my first kafka message from Vitya!!!                                                                                    
+my second message...                                                                                                    
+three 
+```
+
+Spring Kafka (аналогично rabbitmq через SCS) или более низкоуровневый вариант от спринга
+
