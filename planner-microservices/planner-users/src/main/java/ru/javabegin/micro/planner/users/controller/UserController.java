@@ -20,9 +20,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
-import ru.javabegin.micro.planner.users.mq.func.MessageFuncActions;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
@@ -37,13 +37,17 @@ public class UserController {
     public static final String ID_COLUMN = "id"; // имя столбца id
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
+    // (для kafka spring-kafka низкоуровневый способ)
+    private final KafkaTemplate<String, Long> kafkaTemplate;
+    private final static String TOPIC_NAME = "my-test-topic";
+
     // микросервисы для работы с пользователями
 //    private final UserWebClientBuilder userWebClientBuilder;
 
-    // для отправки сообщения по требованию (реализовано с помощью функц. кода)
-    private final MessageFuncActions messageFuncActions;
+    // для отправки сообщения по требованию (реализовано с помощью функц. кода) (для RABBIT MQ SCS)
+//    private final MessageFuncActions messageFuncActions;
 
-    //для легаси отправки сообщений
+    //для легаси отправки сообщений (для RABBIT MQ SCS)
 //    private final MessageProducer messageProducer;
 
     // используем автоматическое внедрение экземпляра класса через конструктор
@@ -51,11 +55,13 @@ public class UserController {
     public UserController(UserService userService
 //            , MessageProducer messageProducer
 //            , UserWebClientBuilder userWebClientBuilder
-            , MessageFuncActions messageFuncActions
+//            , MessageFuncActions messageFuncActions
+            , KafkaTemplate<String, Long> kafkaTemplate
     ) {
         this.userService = userService;
+        this.kafkaTemplate = kafkaTemplate;
 //        this.userWebClientBuilder = userWebClientBuilder;
-        this.messageFuncActions = messageFuncActions;
+//        this.messageFuncActions = messageFuncActions;
 //        this.messageProducer = messageProducer;
     }
 
@@ -114,10 +120,13 @@ public class UserController {
         user = userService.add(user);
 
         if (user != null) {
-            // Функ отправка в очередь
-            messageFuncActions.sendNewUserMessage(user.getId());
 
-            // Legacy отправка в очередь
+            kafkaTemplate.send(TOPIC_NAME, user.getId());
+
+            // Функ отправка в очередь (RABBIT MQ SCS)
+//            messageFuncActions.sendNewUserMessage(user.getId());
+
+            // Legacy отправка в очередь (RABBIT MQ SCS)
 //            messageProducer.newUserAction(user.getId());
 
             //заполняем начальные данные пользователя (в параллелном потоке)

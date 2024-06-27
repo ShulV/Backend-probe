@@ -1,5 +1,7 @@
 package ru.javabegin.micro.planner.todo.service;
 
+import org.springframework.kafka.annotation.KafkaListener;
+import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.javabegin.micro.planner.entity.*;
 
@@ -13,12 +15,20 @@ public class TestDataService {
     private final PriorityService priorityService;
     private final CategoryService categoryService;
 
+    // (для kafka spring-kafka низкоуровневый способ)
+    private final static String TOPIC_NAME = "my-test-topic";
+
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
     public TestDataService(TaskService taskService, PriorityService priorityService, CategoryService categoryService) {
         this.taskService = taskService;
         this.priorityService = priorityService;
         this.categoryService = categoryService;
+    }
+
+    @KafkaListener(topics = TOPIC_NAME)
+    public void listenCreateUser(Long userId) {
+        initTestData(userId);
     }
 
     public void initTestData(Long userId){

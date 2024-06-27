@@ -27,7 +27,8 @@ dependencies {
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-eureka-client'
     implementation 'ru.javabegin.micro.planner:planner-entity:0.0.1-SNAPSHOT'
     implementation 'ru.javabegin.micro.planner:planner-utils:0.0.1-SNAPSHOT'
-    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
+//    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
+    implementation 'org.springframework.kafka:spring-kafka'
 
     // обязательно должна быть именно библиотека с netflix в названии (иначе проект может не запуститься)
     implementation 'org.springframework.cloud:spring-cloud-starter-netflix-hystrix:+'

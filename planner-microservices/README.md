@@ -39,7 +39,7 @@ start kafka-server-start C:\Users\vshul\Progr\kafka\config\server.properties
 
 Создание топика из консоли
 ```shell
-kafka-topics --create --topic javabegin-topic --bootstrap-server localhost:9092 
+kafka-topics --create --topic my-test-topic --bootstrap-server localhost:9092 
 ```
 
 Посмотреть топики
@@ -49,7 +49,7 @@ kafka-topics --list --bootstrap-server localhost:9092
 
 Отправка сообщений через консоль
 ```shell
-C:\Users\vshul>kafka-console-producer --topic quickstart-events --bootstrap-server localhost:9092                       
+C:\Users\vshul>kafka-console-producer --topic my-test-topic --bootstrap-server localhost:9092                       
 >my first kafka message from Vitya!!!                                                                                   
 >my second message...                                                                                                   
 >three                                                                                                                  
@@ -58,7 +58,7 @@ C:\Users\vshul>kafka-console-producer --topic quickstart-events --bootstrap-serv
 
 Получение сообщений через консоль
 ```shell
-C:\Users\vshul>kafka-console-consumer --topic quickstart-events --from-beginning --bootstrap-server localhost:9092      
+C:\Users\vshul>kafka-console-consumer --topic my-test-topic --from-beginning --bootstrap-server localhost:9092      
 my first kafka message from Vitya!!!                                                                                    
 my second message...                                                                                                    
 three 

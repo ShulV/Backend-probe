@@ -28,8 +28,8 @@ dependencies {
     implementation 'ru.javabegin.micro.planner:planner-utils:+'
 //    implementation 'org.springframework.cloud.spring-cloud-starter-netflix-hystrix:+'
 
-    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
-
+//    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
+    implementation 'org.springframework.kafka:spring-kafka'
 
     // Дравйвер БД
     runtimeOnly 'org.postgresql:postgresql'
