@@ -44,3 +44,15 @@ public:
 - сервер, где формируется UI, НЕ может гарантировать безопасное хранение secret
 - увеличивается кол-во шагов для получения access token (также нагрузка на frontend-код, потому что потребуется выполнять крипто-функции)
 - используется для client-side-applications (JS фреймфорки, Angular, React, Vue.js)
+
+Создаем тестового пользователя для проверки flow:
+имя: shulv
+пароль: 123
+
+Flows:
+
+1) Authorization code (AC)
+настройки keycloak:
+- standard flow enabled = true
+- access type = confidential
+- credentials -> secret = ***** (для)
