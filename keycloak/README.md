@@ -53,7 +53,7 @@ public:
 
 МОЖНО ТЕСТИТЬ И ПРОБОВАТЬ FLOWS ПРЯМО НА ОФ. САЙТ https://www.oauth.com/playground/
 
-### 1) Authorization code (AC)
+### 1) Authorization code (AC) flow
 настройки keycloak:
 - standard flow enabled = true
 - access type = confidential
@@ -72,4 +72,37 @@ POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/toke
 ```
 с параметрами в body: grant_type, client_id, client_secret, redirect_uri, code
 
-### 2) 
+### 2) PKCE (proof key for code exchange) flow
+- access type = public
+- Для работы с PKCE понадобятся специальные генераторы параметров code_verifier и code_challenge
+  В обычном приложении эти коды создаются в коде с помощью библиотек-утилит.
+1) получение ссылки авторизации с кодами:
+```
+http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/auth?response_type=code&client_id=my-todoapp-client-id&redirect_uri=http://localhost:8010/redirect&scope=openid profile&state=k2fTcNERUEgzEoyK&code_challenge=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU&code_challenge_method=S256
+```
+ответ - форма авторизации:
+```
+GET: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/auth?response_type=code&client_id=my-todoapp-client-id&redirect_uri=http://localhost:8010/redirect&scope=openid%20profile&state=k2fTcNERUEgzEoyK&code_challenge=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU&code_challenge_method=S256
+```
+
+2) После авторизации
+```
+GET: http://localhost:8010/redirect?state=k2fTcNERUEgzEoyK&session_state=d37b0fea-807c-4f26-9a97-e8af5e9f9c50&iss=http%3A%2F%2Flocalhost%3A8180%2Frealms%2Fmy-todoapp-realm&code=31e09195-50be-41ab-b1af-eecac832ef09.d37b0fea-807c-4f26-9a97-e8af5e9f9c50.522b7fd4-863f-476d-8964-13f26839298d
+```
+3) Получение access token
+```
+POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
+```
+с параметрами в body: grant_type, client_id, redirect_uri, code, code_verifier
+
+### 3) Client Credentials flow:
+Общение между серверами (m2m, server to server, backend to backend), без клиента и фронта
+- включить настройку confidential в KeyCloak, чтобы можно было использовать secret для получения access token
+- включить галочку Service Account Enabled (чтобы включился режим Client Credentials) – иначе запрос на получение access token будет возвращаться с ошибкой “не могу выполнить запрос”
+- желательно отключить Standart Flow Enabled (хотя и со включенным CC будет работать), т.к. на не нужен будет Code для получения access token
+
+1) Получение at:
+```
+http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
+```
+с параметрами в body: grant_type, client_id, client_secret, scope
