@@ -1,6 +1,6 @@
 # Keycloak
 
-Запуск keycloak windows
+## Запуск keycloak windows
 
 Прописал системные переменные, JAVA_HOME
 прописал данные БД в конфиге keycloak.conf
@@ -29,7 +29,7 @@ my-todoapp-realm
 
 Настраиваем клиент (наше бэкенд приложение)
 
-#### **Access Type**
+## **Access Type**
 
 confidential:
 - будет использоваться статичный secret из KeyCloak
@@ -49,10 +49,27 @@ public:
 имя: shulv
 пароль: 123
 
-Flows:
+## Flows:
 
-1) Authorization code (AC)
+МОЖНО ТЕСТИТЬ И ПРОБОВАТЬ FLOWS ПРЯМО НА ОФ. САЙТ https://www.oauth.com/playground/
+
+### 1) Authorization code (AC)
 настройки keycloak:
 - standard flow enabled = true
 - access type = confidential
 - credentials -> secret = ***** (для)
+
+State – это временное значение, которое клиентское приложение генерит из случайных символов.
+Основное назначение – защита client application от мошенника.
+В приложении мы должны генерить state, а затем сравнивать с тем, который возвращается в ответе (CSRF-защита).
+1) Получение AC:
+```
+GET: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/auth?response_type=code&client_id=my-todoapp-client-id&state=sidyuf8s67dfisdgf&scope=openid profile&redirect_uri=http://localhost:8010/redirect
+```
+2) Получение по AC, access token'а
+```
+POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
+```
+с параметрами в body: grant_type, client_id, client_secret, redirect_uri, code
+
+### 2) 
