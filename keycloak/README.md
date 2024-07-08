@@ -70,7 +70,7 @@ GET: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/auth?
 ```
 POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 ```
-с параметрами в body: grant_type, client_id, client_secret, redirect_uri, code
+с параметрами в body: grant_type = authorization_code, client_id, client_secret, redirect_uri, code
 
 ### 2) PKCE (proof key for code exchange) flow
 - access type = public
@@ -93,7 +93,7 @@ GET: http://localhost:8010/redirect?state=k2fTcNERUEgzEoyK&session_state=d37b0fe
 ```
 POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 ```
-с параметрами в body: grant_type, client_id, redirect_uri, code, code_verifier
+с параметрами в body: grant_type = authorization_code, client_id, redirect_uri, code, code_verifier
 
 ### 3) Client Credentials flow:
 Общение между серверами (m2m, server to server, backend to backend), без клиента и фронта
@@ -105,4 +105,23 @@ POST: http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/toke
 ```
 http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 ```
-с параметрами в body: grant_type, client_id, client_secret, scope
+с параметрами в body: grant_type = client_credentials, client_id, client_secret, scope
+
+## IAM (Identity and access management), OpenID Connect, oauth2
+- Access Token – для разрешения запросов к Resource Server (авторизация)
+- Id Token – данные самого пользователя (идентификация)
+Id Token – сокращения от identity token
+согласно OIDC: Id Token это в первую очередь данные об аутентификации пользователя 
+и только потом ОПЦИОНАЛЬНО он может содержать данные самого пользователя (имя, email и пр.)
+
+## Можно настроить Окно “Consent Screen”
+Окно подтверждения пользователем того, что он дает доступ другому приложению к использованию данных
+В этом окне можно настроить сообщение, показывать к каким scopes пользователь имеет доступ
+
+# Получаем новый access_token с помощью refresh_token
+```
+http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
+```
+с параметрами в body: grant_type = refresh_token, client_id, client_secret, refresh_token
+
+Чтобы получить бессрочный refresh_token нужно в scope параметр передать offline_access
