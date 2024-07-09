@@ -125,3 +125,10 @@ http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 с параметрами в body: grant_type = refresh_token, client_id, client_secret, refresh_token
 
 Чтобы получить бессрочный refresh_token нужно в scope параметр передать offline_access
+
+## Spring boot oauth2
+Одна настройка для зависимости oauth2 и запрос будут требовать access token через header Authorization: Bearer <access_token>:
+```properties
+# Ссылка на сертификаты auth server для проверки целостности access token
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/certs
+```
