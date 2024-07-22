@@ -132,3 +132,22 @@ http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 # Ссылка на сертификаты auth server для проверки целостности access token
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/certs
 ```
+
+## Роли
+### на уровне спринга:
+Нет привилегий из коробки, для этого можно заюзать, например, spring-acl.
+(там нужно будет создать 4 таблицы по доке и добавить пару конфигурационных бинов)
+```java
+//объект роли
+import  org.springframework.security.core.GrantedAuthority;
+```
+
+### на уровне keycloak
+- есть роли на уровне realm (для всех клиентов)
+- есть роли на уровне клиента (видны только для конкретного клиента)
+
+### системные роли
+Для каждого клиента (нашего приложения) создается client account user,
+у которого по умолчанию есть системные роли.
+Их можно добавлять и удалять, свои системные создавать не рекомендуется.
+Системные роли в основном нужны для управления пользователями и тд через keycloak api.
