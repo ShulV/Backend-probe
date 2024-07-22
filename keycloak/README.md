@@ -151,3 +151,25 @@ import  org.springframework.security.core.GrantedAuthority;
 у которого по умолчанию есть системные роли.
 Их можно добавлять и удалять, свои системные создавать не рекомендуется.
 Системные роли в основном нужны для управления пользователями и тд через keycloak api.
+
+## Authority и role spring security
+В целом то же самое, но нужно чекать по-разному
+```java
+http.authorizeRequests()
+    .antMatchers().hasRole("admin")
+    .antMatchers().hasAuthority("ROLE_admin")
+.build;
+```
+
+## Spring boot keycloak starter
+В качестве доп. информации: существует еще один вариант для защиты URL по ролям с помощью KeyCloak SpringBoot starter
+
+https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapter
+
+Просто подключаете библиотеку, настраиваете связь с KC, прописываете защиту URL.
+
+Основное отличие от первого варианта (конвертер, antMatchers, @PreAuthorize)
+
+не нужно писать свой конвертер – все роли считываются автоматически
+приложение явно привязано к KeyCloak (обязательно в приложении прописываете URL, realm и пр.)
+настройки защиты URL можно прописывать вне кода (в файле properties)
