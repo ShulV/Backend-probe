@@ -1,4 +1,4 @@
-package ru.javabegin.micro.demo.commontest;
+package ru.javabegin.micro.demo.commontest.controllers;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,5 +11,4 @@ public class CommonController {
     public String getRedirect() {
         return "page.html";
     }
-
 }

@@ -118,7 +118,7 @@ Id Token – сокращения от identity token
 Окно подтверждения пользователем того, что он дает доступ другому приложению к использованию данных
 В этом окне можно настроить сообщение, показывать к каким scopes пользователь имеет доступ
 
-# Получаем новый access_token с помощью refresh_token
+## Получаем новый access_token с помощью refresh_token
 ```
 http://localhost:8180/realms/my-todoapp-realm/protocol/openid-connect/token
 ```
