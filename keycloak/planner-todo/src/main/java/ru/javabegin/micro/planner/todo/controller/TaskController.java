@@ -79,16 +79,16 @@ public class TaskController {
         }
 
         // если такой пользователь существует
-        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
+//        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
             return ResponseEntity.ok(taskService.add(task)); // возвращаем добавленный объект с заполненным ID
-        }
+//        }
 
 //        // если такой пользователь существует
 //        if (userWebClientBuilder.userExists(task.getUserId())) { // вызываем микросервис из другого модуля
 //            return ResponseEntity.ok(taskService.add(task)); // возвращаем созданный объект со сгенерированным id
 //        }
 
-        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
+//        return new ResponseEntity("user id=" + task.getUserId() + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
 
 
