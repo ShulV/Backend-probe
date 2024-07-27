@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import ru.javabegin.micro.planner.entity.Category;
 
 import java.util.List;
+import java.util.UUID;
 
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, Long> {
@@ -15,12 +16,12 @@ public interface CategoryRepository extends JpaRepository<Category, Long> {
 //    List<Category> findByUserEmailOrderByTitleAsc(String email);
 
     // поиск категорий пользователя (по названию)
-    List<Category> findByUserIdOrderByTitleAsc(Long userId);
+    List<Category> findByUserIdOrderByTitleAsc(UUID userId);
 
     @Query("select c FROM Category c where " +
             "(:title is null or :title='' " +
             "or lower(c.title) like lower(concat('%', :title, '%'))) " +
             "and c.userId=:userId " +
             "order by c.title asc")
-    List<Category> findByTitle(@Param("title") String title, @Param("userId") Long userId);
+    List<Category> findByTitle(@Param("title") String title, @Param("userId") UUID userId);
 }

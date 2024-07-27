@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @NoArgsConstructor
 @Getter
 @Setter
@@ -12,5 +14,5 @@ import lombok.Setter;
 public class CategorySearchValues {
 
     private String title;
-    private Long userId;
+    private UUID userId;
 }

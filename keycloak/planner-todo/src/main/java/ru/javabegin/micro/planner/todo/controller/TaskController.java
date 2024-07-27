@@ -14,10 +14,7 @@ import ru.javabegin.micro.planner.todo.search.TaskSearchValues;
 import ru.javabegin.micro.planner.todo.service.TaskService;
 
 import java.text.ParseException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 
 
 /*
@@ -59,7 +56,7 @@ public class TaskController {
 
     // получение всех данных
     @PostMapping("/all")
-    public ResponseEntity<List<Task>> findAll(@RequestBody Long userId) {
+    public ResponseEntity<List<Task>> findAll(@RequestBody UUID userId) {
         return ResponseEntity.ok(taskService.findAll(userId)); // поиск всех задач конкретного пользователя
     }
 
@@ -169,10 +166,10 @@ public class TaskController {
         Integer pageNumber = taskSearchValues.getPageNumber() != null ? taskSearchValues.getPageNumber() : null;
         Integer pageSize = taskSearchValues.getPageSize() != null ? taskSearchValues.getPageSize() : null;
 
-        Long userId = taskSearchValues.getUserId() != null ? taskSearchValues.getUserId() : null; // для показа задач только этого пользователя
+        UUID userId = taskSearchValues.getUserId() != null ? taskSearchValues.getUserId() : null; // для показа задач только этого пользователя
 
         // проверка на обязательные параметры
-        if (userId == null || userId == 0) {
+        if (userId == null || userId == null) {
             return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
         }
 

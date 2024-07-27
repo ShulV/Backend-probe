@@ -11,6 +11,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
+import java.util.UUID;
 
 /**
  * Задачи пользователя
@@ -55,7 +56,7 @@ public class Task implements Serializable {
 //    private User user; // для какого пользователя задача
 
     @Column(name="user_id")
-    private Long userId;
+    private UUID userId;
 
     @Override
     public boolean equals(Object o) {

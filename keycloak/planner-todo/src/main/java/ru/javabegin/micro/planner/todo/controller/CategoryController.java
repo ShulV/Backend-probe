@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.Category;
 import ru.javabegin.micro.planner.entity.User;
@@ -15,6 +17,7 @@ import ru.javabegin.micro.planner.todo.service.CategoryService;
 
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/category")
@@ -44,13 +47,16 @@ public class CategoryController {
     }
 
     @PostMapping("/all")
-    public List<Category> findAll(@RequestBody Long userId) {
-        return categoryService.findAll(userId);
+    public List<Category> findAll(@RequestBody String userId) {
+        return categoryService.findAll(UUID.fromString(userId));
     }
 
 
     @PostMapping("/add")
-    public ResponseEntity<Category> add(@RequestBody Category category) {
+    public ResponseEntity<Category> add(@RequestBody Category category, @AuthenticationPrincipal Jwt jwt) {
+        UUID userId = UUID.fromString(jwt.getSubject());
+
+        category.setUserId(userId);//чтоб не париться, все равно тут учусь
 
         // проверка на обязательные параметры
         if (category.getId() != null && category.getId() != 0) { // это означает, что id заполнено
@@ -73,14 +79,14 @@ public class CategoryController {
 
         // вызов мс через feign интерфейс
 
-        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
-        System.out.println(result);
+//        ResponseEntity<User> result =  userFeignClient.findUserById(category.getUserId());
+//        System.out.println(result);
 
-        if (result == null){ // если мс недоступен - вернется null
-            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
-        }
+//        if (result == null){ // если мс недоступен - вернется null
+//            return new ResponseEntity("система пользователей недоступна, попробуйте позже", HttpStatus.NOT_FOUND);
+//        }
 
-        if (result.getBody() != null){ // если пользователь не пустой
+        if (jwt.getSubject() != null && !jwt.getSubject().isEmpty()){ // если пользователь не пустой
             return ResponseEntity.ok(categoryService.add(category));
         }
 
@@ -94,7 +100,7 @@ public class CategoryController {
     public ResponseEntity update(@RequestBody Category category) {
 
         // проверка на обязательные параметры
-        if (category.getId() == null || category.getId() == 0) {
+        if (category.getId() == null || category.getId() == null) {
             return new ResponseEntity("missed param: id", HttpStatus.NOT_ACCEPTABLE);
         }
 
@@ -133,7 +139,7 @@ public class CategoryController {
     public ResponseEntity<List<Category>> search(@RequestBody CategorySearchValues categorySearchValues) {
 
         // проверка на обязательные параметры
-        if (categorySearchValues.getUserId() == null || categorySearchValues.getUserId() == 0) {
+        if (categorySearchValues.getUserId() == null || categorySearchValues.getUserId() == null) {
             return new ResponseEntity("missed param: user id", HttpStatus.NOT_ACCEPTABLE);
         }
 

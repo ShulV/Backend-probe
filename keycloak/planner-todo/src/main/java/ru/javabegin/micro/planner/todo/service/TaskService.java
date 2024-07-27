@@ -9,6 +9,7 @@ import ru.javabegin.micro.planner.todo.repository.TaskRepository;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,
 // что мало методов или это все можно реализовать сразу в контроллере
@@ -27,7 +28,7 @@ public class TaskService {
     }
 
 
-    public List<Task> findAll(Long userId) {
+    public List<Task> findAll(UUID userId) {
         return repository.findByUserIdOrderByTitleAsc(userId);
     }
 
@@ -44,7 +45,7 @@ public class TaskService {
     }
 
 
-    public Page<Task> findByParams(String text, Boolean completed, Long priorityId, Long categoryId, Long userId, Date dateFrom, Date dateTo, PageRequest paging) {
+    public Page<Task> findByParams(String text, Boolean completed, Long priorityId, Long categoryId, UUID userId, Date dateFrom, Date dateTo, PageRequest paging) {
         return repository.findByParams(text, completed, priorityId, categoryId, userId, dateFrom, dateTo, paging);
     }
 

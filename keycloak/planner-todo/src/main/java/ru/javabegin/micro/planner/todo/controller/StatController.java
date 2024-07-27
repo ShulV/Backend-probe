@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RestController;
 import ru.javabegin.micro.planner.entity.Stat;
 import ru.javabegin.micro.planner.todo.service.StatService;
 
+import java.util.UUID;
+
 
 /*
 
@@ -36,8 +38,10 @@ public class StatController {
 
 
     // для статистика всгда получаем только одну строку с id=1 (согласно таблице БД)
+
+    //FIXME вопрос почему тут email и user_id, не до этого, учимся дальше...
     @PostMapping("/stat")
-    public ResponseEntity<Stat> findByEmail(@RequestBody Long userId) {
+    public ResponseEntity<Stat> findByEmail(@RequestBody UUID userId) {
 
         // можно не использовать ResponseEntity, а просто вернуть коллекцию, код все равно будет 200 ОК
         return ResponseEntity.ok(service.findStat(userId));

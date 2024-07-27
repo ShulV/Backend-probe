@@ -1,12 +1,13 @@
 package ru.javabegin.micro.planner.todo.service;
 
-import org.springframework.kafka.annotation.KafkaListener;
-import org.springframework.kafka.core.KafkaTemplate;
+//import org.springframework.kafka.annotation.KafkaListener;
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
 import ru.javabegin.micro.planner.entity.*;
 
 import java.util.Calendar;
 import java.util.Date;
+import java.util.UUID;
 
 @Service
 public class TestDataService {
@@ -26,12 +27,12 @@ public class TestDataService {
         this.categoryService = categoryService;
     }
 
-    @KafkaListener(topics = TOPIC_NAME)
-    public void listenCreateUser(Long userId) {
-        initTestData(userId);
-    }
+//    @KafkaListener(topics = TOPIC_NAME)
+//    public void listenCreateUser(UUID userId) {
+//        initTestData(userId);
+//    }
 
-    public void initTestData(Long userId){
+    public void initTestData(UUID userId){
         Priority prior1 = new Priority();
         prior1.setColor("#fff");
         prior1.setTitle("Важный");

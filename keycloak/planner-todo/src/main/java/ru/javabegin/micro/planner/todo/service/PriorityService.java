@@ -6,6 +6,7 @@ import ru.javabegin.micro.planner.entity.Priority;
 import ru.javabegin.micro.planner.todo.repository.PriorityRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,
 // что мало методов или это все можно реализовать сразу в контроллере
@@ -23,7 +24,7 @@ public class PriorityService {
         this.repository = repository;
     }
 
-    public List<Priority> findAll(Long userId) {
+    public List<Priority> findAll(UUID userId) {
         return repository.findByUserIdOrderByIdAsc(userId);
     }
 
@@ -43,7 +44,7 @@ public class PriorityService {
         return repository.findById(id).get(); // т.к. возвращается Optional - можно получить объект методом get()
     }
 
-    public List<Priority> find(String title, Long userId) {
+    public List<Priority> find(String title, UUID userId) {
         return repository.findByTitle(title, userId);
     }
 

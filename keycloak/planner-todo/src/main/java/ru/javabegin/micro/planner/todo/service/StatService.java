@@ -5,6 +5,8 @@ import org.springframework.transaction.annotation.Transactional;
 import ru.javabegin.micro.planner.entity.Stat;
 import ru.javabegin.micro.planner.todo.repository.StatRepository;
 
+import java.util.UUID;
+
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,
 // что мало методов или это все можно реализовать сразу в контроллере
@@ -22,7 +24,7 @@ public class StatService {
         this.repository = repository;
     }
 
-    public Stat findStat(Long userId) {
+    public Stat findStat(UUID userId) {
         return repository.findByUserId(userId);
     }
 

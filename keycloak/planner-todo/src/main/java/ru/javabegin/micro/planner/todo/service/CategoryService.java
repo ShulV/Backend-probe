@@ -7,6 +7,7 @@ import ru.javabegin.micro.planner.entity.Category;
 import ru.javabegin.micro.planner.todo.repository.CategoryRepository;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @Transactional
@@ -22,7 +23,7 @@ public class CategoryService {
         return repository.findById(id).get();
     }
 
-    public List<Category> findAll(Long userId) {
+    public List<Category> findAll(UUID userId) {
         return repository.findByUserIdOrderByTitleAsc(userId);
     }
 
@@ -38,7 +39,7 @@ public class CategoryService {
         repository.deleteById(id);
     }
 
-    public List<Category> findByTitle(String text, Long userId) {
+    public List<Category> findByTitle(String text, UUID userId) {
         return repository.findByTitle(text, userId);
     }
 }

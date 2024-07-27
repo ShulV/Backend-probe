@@ -7,6 +7,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import ru.javabegin.micro.planner.todo.service.TestDataService;
 
+import java.util.UUID;
+
 
 /**
  * Для заполнения тестовыми данными
@@ -28,7 +30,7 @@ public class TestDataController {
 
 
     @PostMapping("/init")
-    public ResponseEntity<Boolean> init(@RequestBody Long userId) {
+    public ResponseEntity<Boolean> init(@RequestBody UUID userId) {
 
         testDataService.initTestData(userId);
 

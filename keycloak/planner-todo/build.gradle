@@ -28,7 +28,7 @@ dependencies {
     implementation 'ru.javabegin.micro.planner:planner-entity:0.0.1-SNAPSHOT'
     implementation 'ru.javabegin.micro.planner:planner-utils:0.0.1-SNAPSHOT'
 //    implementation 'org.springframework.cloud:spring-cloud-starter-stream-rabbit:+'
-    implementation 'org.springframework.kafka:spring-kafka'
+//    implementation 'org.springframework.kafka:spring-kafka'
 
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
 

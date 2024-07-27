@@ -7,13 +7,14 @@ import org.springframework.stereotype.Repository;
 import ru.javabegin.micro.planner.entity.Priority;
 
 import java.util.List;
+import java.util.UUID;
 
 // принцип ООП: абстракция-реализация - здесь описываем все доступные способы доступа к данным
 @Repository
 public interface PriorityRepository extends JpaRepository<Priority, Long> {
 
     // поиск всех значений данного пользователя
-    List<Priority> findByUserIdOrderByIdAsc(Long userId);
+    List<Priority> findByUserIdOrderByIdAsc(UUID userId);
 
     // поиск значений по названию для конкретного пользователя
     @Query("SELECT p FROM Priority p where " +
@@ -21,6 +22,6 @@ public interface PriorityRepository extends JpaRepository<Priority, Long> {
             " or lower(p.title) like lower(concat('%', :title,'%'))) " + // если параметр title не пустой, то выполнится уже это условие
             " and p.userId=:userId " + // фильтрация для конкретного пользователя
             "order by p.title asc") // сортировка по названию
-    List<Priority> findByTitle(@Param("title") String title, @Param("userId") Long userId);
+    List<Priority> findByTitle(@Param("title") String title, @Param("userId") UUID userId);
 
 }

@@ -11,6 +11,7 @@ import ru.javabegin.micro.planner.entity.Task;
 
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 // принцип ООП: абстракция-реализация - здесь описываем все доступные способы доступа к данным
 @Repository
@@ -33,7 +34,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
                             @Param("completed") Boolean completed,
                             @Param("priorityId") Long priorityId,
                             @Param("categoryId") Long categoryId,
-                            @Param("userId") Long userid,
+                            @Param("userId") UUID userid,
                             @Param("dateFrom") Date dateFrom,
                             @Param("dateTo") Date dateTo,
                             Pageable pageable
@@ -41,7 +42,7 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
 
 
     // поиск всех задач конкретного пользователя
-    List<Task> findByUserIdOrderByTitleAsc(Long userId);
+    List<Task> findByUserIdOrderByTitleAsc(UUID userId);
 
 
 }
