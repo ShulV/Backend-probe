@@ -14,13 +14,13 @@ package ru.javabegin.micro.planner.users.controller;
 
 */
 
+//import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
@@ -38,8 +38,8 @@ public class UserController {
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
 
     // (для kafka spring-kafka низкоуровневый способ)
-    private final KafkaTemplate<String, Long> kafkaTemplate;
-    private final static String TOPIC_NAME = "my-test-topic";
+//    private final KafkaTemplate<String, Long> kafkaTemplate;
+//    private final static String TOPIC_NAME = "my-test-topic";
 
     // микросервисы для работы с пользователями
 //    private final UserWebClientBuilder userWebClientBuilder;
@@ -56,10 +56,10 @@ public class UserController {
 //            , MessageProducer messageProducer
 //            , UserWebClientBuilder userWebClientBuilder
 //            , MessageFuncActions messageFuncActions
-            , KafkaTemplate<String, Long> kafkaTemplate
+//            , KafkaTemplate<String, Long> kafkaTemplate
     ) {
         this.userService = userService;
-        this.kafkaTemplate = kafkaTemplate;
+//        this.kafkaTemplate = kafkaTemplate;
 //        this.userWebClientBuilder = userWebClientBuilder;
 //        this.messageFuncActions = messageFuncActions;
 //        this.messageProducer = messageProducer;
@@ -121,7 +121,7 @@ public class UserController {
 
         if (user != null) {
 
-            kafkaTemplate.send(TOPIC_NAME, user.getId());
+//            kafkaTemplate.send(TOPIC_NAME, user.getId());
 
             // Функ отправка в очередь (RABBIT MQ SCS)
 //            messageFuncActions.sendNewUserMessage(user.getId());
