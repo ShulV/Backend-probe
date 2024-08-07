@@ -41,6 +41,11 @@ public class User {
     @ManyToMany(mappedBy = "users")
     private Set<Role> roles;
 
+    public User(String email, String username, String password) {
+        this.email = email;
+        this.username = username;
+        this.password = password;
+    }
 
     @Override
     public boolean equals(Object o) {

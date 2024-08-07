@@ -2,6 +2,8 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '2.7.12'
     id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.github.ben-manes.versions' version '0.44.0'
+    id 'ca.cutterslade.analyze' version '1.5.0'
 }
 
 group = 'ru.javabegin.micro.planner'
@@ -10,7 +12,7 @@ sourceCompatibility = '17'
 
 repositories {
     mavenCentral()
-    maven { url 'https://repository.jboss.org/nexus/content/repositories/releases' }
+    maven { url 'https://mvnrepository.com/' }
     mavenLocal()
 }
 
@@ -25,9 +27,13 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-aop'
-    implementation ('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client') {
-        // Нужно исключить реализацию, т.к. конфликты между cloud netflix и keycloak
-        exclude group: "javax.ws.rs", module: "jsr311-api"
+    implementation ('org.springframework.cloud:spring-cloud-starter-netflix-eureka-client')
+            {
+        exclude group: 'javax.ws.rs', module: 'jsr311-api' // Нужно исключить эту реализацию, которая несовместима keycloak
+        // подробнее о проблеме и решении:
+        // https://stackoverflow.com/questions/38320163/failed-adding-user-by-keycloak-admin-client-to-keycloak-due-to-unknown-resource
+        // https://stackoverflow.com/questions/50334943/springboot-keycloak-nosuchmethoderror-javax-ws-rs-core-uribuilder-resolvetempla
+
     }
 
     implementation 'ru.javabegin.micro.planner:planner-entity:+'
@@ -40,7 +46,18 @@ dependencies {
     // Библиотеки, все классы для работы с oauth2
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-resource-server'
     // Адаптер для работы с KC
-    implementation "org.keycloak:keycloak-admin-client:${keycloakVersion}"
+    implementation ("org.keycloak:keycloak-admin-client:${keycloakVersion}")
+//    {
+//        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+//    }
+//
+//    implementation("org.keycloak:keycloak-adapter-core:${keycloakVersion}")
+//    {
+//        exclude group: 'javax.ws.rs', module: 'javax.ws.rs-api'
+//    }
+
+    // Добавление новой библиотеки Jakarta WS RS
+    implementation 'jakarta.ws.rs:jakarta.ws.rs-api:4.0.0'
 
     // Дравйвер БД
     runtimeOnly 'org.postgresql:postgresql'

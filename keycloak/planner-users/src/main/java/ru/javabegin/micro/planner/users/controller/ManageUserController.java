@@ -15,6 +15,7 @@ package ru.javabegin.micro.planner.users.controller;
 */
 
 //import org.springframework.kafka.core.KafkaTemplate;
+import jakarta.ws.rs.core.Response;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
+import ru.javabegin.micro.planner.users.dto.UserDTO;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
@@ -31,8 +33,8 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/user") // базовый URI
-public class UserController {
+@RequestMapping("/admin/user") // базовый URI
+public class ManageUserController {
 
     public static final String ID_COLUMN = "id"; // имя столбца id
     private final UserService userService; // сервис для доступа к данным (напрямую к репозиториям не обращаемся)
@@ -52,7 +54,7 @@ public class UserController {
 
     // используем автоматическое внедрение экземпляра класса через конструктор
     // не используем @Autowired ля переменной класса, т.к. "Field injection is not recommended "
-    public UserController(UserService userService
+    public ManageUserController(UserService userService
 //            , MessageProducer messageProducer
 //            , UserWebClientBuilder userWebClientBuilder
 //            , MessageFuncActions messageFuncActions
@@ -68,10 +70,10 @@ public class UserController {
 
     // добавление
     @PostMapping("/add")
-    public ResponseEntity<User> add(@RequestBody User user) {
+    public ResponseEntity<Response> add(@RequestBody UserDTO user) {
 
         // проверка на обязательные параметры
-        if (user.getId() != null && user.getId() != 0) {
+        if (user.getId() != null) {
             // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
             return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -90,15 +92,15 @@ public class UserController {
         }
 
         // добавляем пользователя
-        user = userService.add(user);
+        Response userResponse = userService.add(user);
 
-        return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
+        return ResponseEntity.ok(userResponse);// Возвращаем созданный объект со сгенерированным id
     }
 
     @PostMapping("/add-with-test-data")
-    public ResponseEntity<User> addWithInitData(@RequestBody User user) {
+    public ResponseEntity<Response> addWithInitData(@RequestBody UserDTO user) {
         // проверка на обязательные параметры
-        if (user.getId() != null && user.getId() != 0) {
+        if (user.getId() != null) {
             // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
             return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
         }
@@ -117,7 +119,7 @@ public class UserController {
         }
 
         // добавляем пользователя
-        user = userService.add(user);
+        Response userResponse = userService.add(user);
 
         if (user != null) {
 
@@ -136,7 +138,7 @@ public class UserController {
 //            );
         }
 
-        return ResponseEntity.ok(user); // возвращаем созданный объект со сгенерированным id
+        return ResponseEntity.ok(userResponse); // возвращаем созданный объект со сгенерированным id
     }
 
     // обновление

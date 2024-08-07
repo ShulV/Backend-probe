@@ -1,12 +1,16 @@
 package ru.javabegin.micro.planner.users.service;
 
+import jakarta.ws.rs.core.Response;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.javabegin.micro.planner.entity.User;
+import ru.javabegin.micro.planner.users.dto.UserDTO;
+import ru.javabegin.micro.planner.users.keycloak.KeycloakUtils;
 import ru.javabegin.micro.planner.users.repository.UserRepository;
 
+import java.util.Collections;
 import java.util.Optional;
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,
@@ -20,9 +24,11 @@ import java.util.Optional;
 public class UserService {
 
     private final UserRepository repository; // сервис имеет право обращаться к репозиторию (БД)
+    private final KeycloakUtils keycloakUtils;
 
-    public UserService(UserRepository repository) {
+    public UserService(UserRepository repository, KeycloakUtils keycloakUtils) {
         this.repository = repository;
+        this.keycloakUtils = keycloakUtils;
     }
 
     // возвращает только либо 0 либо 1 объект, т.к. email уникален для каждого пользователя
@@ -30,8 +36,13 @@ public class UserService {
         return repository.findByEmail(email);
     }
 
-    public User add(User user) {
-        return repository.save(user); // метод save обновляет или создает новый объект, если его не было
+    public Response add(UserDTO user) {
+        try {
+            return keycloakUtils.createKeycloakUser(user, Collections.singletonList("user"));
+        } catch (Exception e) {
+            System.out.println(e);// test
+            return null;
+        }
     }
 
     public User update(User user) {
