@@ -1,4 +1,4 @@
-rootProject.name = 'planner-microservices'
+rootProject.name = 'keycloak'
 
 includeBuild 'planner-config'
 includeBuild 'planner-gateway'

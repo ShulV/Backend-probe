@@ -28,16 +28,17 @@ public class SpringSecurityConfig {
 
 
         // все сетевые настройки
-        http.authorizeRequests()
-                .antMatchers("/auth").hasRole("user") //Действия самого пользователя
-                .antMatchers("/admin/user").hasRole("admin") // CRUD для управления пользователями
-                .anyRequest().authenticated() // остальной API будет доступен только аутентифицированным пользователям
+        http.authorizeHttpRequests(authorize -> authorize
+                .requestMatchers("/auth/**").hasRole("user") //Действия самого пользователя
+                .requestMatchers("/admin/**").hasRole("admin") // CRUD для управления пользователями
+                .anyRequest().authenticated()); // остальной API будет доступен только аутентифицированным пользователям)
 
-                .and() // добавляем новые настройки, не связанные с предыдущими
 
-                .oauth2ResourceServer()// добавляем конвертер ролей из JWT в Authority (Role)
-                .jwt()
-                .jwtAuthenticationConverter(jwtAuthenticationConverter);
+        http.oauth2ResourceServer(oauth2 -> oauth2
+                        .jwt(jwt -> jwt
+                                .jwtAuthenticationConverter(jwtAuthenticationConverter)
+                        )
+                );
 
         return http.build();
     }

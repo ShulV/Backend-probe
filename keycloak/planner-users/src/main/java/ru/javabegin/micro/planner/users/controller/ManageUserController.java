@@ -15,7 +15,10 @@ package ru.javabegin.micro.planner.users.controller;
 */
 
 //import org.springframework.kafka.core.KafkaTemplate;
+
 import jakarta.ws.rs.core.Response;
+import org.keycloak.admin.client.CreatedResponseUtil;
+import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -29,8 +32,9 @@ import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
 
 import java.text.ParseException;
+import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.Optional;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/admin/user") // базовый URI
@@ -68,9 +72,15 @@ public class ManageUserController {
     }
 
 
+    @GetMapping("/all")
+    public ResponseEntity<List<UserRepresentation>> getAll() {
+        List<UserRepresentation> userRepresentations = userService.getAll();
+        return ResponseEntity.ok(userRepresentations);
+    }
+
     // добавление
     @PostMapping("/add")
-    public ResponseEntity<Response> add(@RequestBody UserDTO user) {
+    public ResponseEntity<UUID> add(@RequestBody UserDTO user) {
 
         // проверка на обязательные параметры
         if (user.getId() != null) {
@@ -92,54 +102,72 @@ public class ManageUserController {
         }
 
         // добавляем пользователя
-        Response userResponse = userService.add(user);
+        Response response = userService.add(user);
 
-        return ResponseEntity.ok(userResponse);// Возвращаем созданный объект со сгенерированным id
+        if (response.getStatus() == HttpStatus.CONFLICT.value()) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(null);
+        }
+
+        if (response.getStatus() == HttpStatus.BAD_REQUEST.value()) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+        }
+
+        if (response.getStatus() == HttpStatus.FORBIDDEN.value()) {
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body(null);
+        }
+
+        if (response.getStatus() == HttpStatus.UNAUTHORIZED.value()) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+        }
+
+        UUID userId = UUID.fromString(CreatedResponseUtil.getCreatedId(response));
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(userId);
     }
 
-    @PostMapping("/add-with-test-data")
-    public ResponseEntity<Response> addWithInitData(@RequestBody UserDTO user) {
-        // проверка на обязательные параметры
-        if (user.getId() != null) {
-            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
-            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        // если передали пустое значение
-        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
-            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
-            return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
-            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        // добавляем пользователя
-        Response userResponse = userService.add(user);
-
-        if (user != null) {
-
-//            kafkaTemplate.send(TOPIC_NAME, user.getId());
-
-            // Функ отправка в очередь (RABBIT MQ SCS)
-//            messageFuncActions.sendNewUserMessage(user.getId());
-
-            // Legacy отправка в очередь (RABBIT MQ SCS)
-//            messageProducer.newUserAction(user.getId());
-
-            //заполняем начальные данные пользователя (в параллелном потоке)
-//            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
-//                        System.out.println("user populated: " + result);
-//                    }
-//            );
-        }
-
-        return ResponseEntity.ok(userResponse); // возвращаем созданный объект со сгенерированным id
-    }
+//    @PostMapping("/add-with-test-data")
+//    public ResponseEntity<Response> addWithInitData(@RequestBody UserDTO user) {
+//        // проверка на обязательные параметры
+//        if (user.getId() != null) {
+//            // id создается автоматически в БД (autoincrement), поэтому его передавать не нужно, иначе может быть конфликт уникальности значения
+//            return new ResponseEntity("redundant param: id MUST be null", HttpStatus.NOT_ACCEPTABLE);
+//        }
+//
+//        // если передали пустое значение
+//        if (user.getEmail() == null || user.getEmail().trim().isEmpty()) {
+//            return new ResponseEntity("missed param: email", HttpStatus.NOT_ACCEPTABLE);
+//        }
+//
+//        if (user.getPassword() == null || user.getPassword().trim().isEmpty()) {
+//            return new ResponseEntity("missed param: password", HttpStatus.NOT_ACCEPTABLE);
+//        }
+//
+//        if (user.getUsername() == null || user.getUsername().trim().isEmpty()) {
+//            return new ResponseEntity("missed param: username", HttpStatus.NOT_ACCEPTABLE);
+//        }
+//
+//        // добавляем пользователя
+//        Response userResponse = userService.add(user);
+//
+//        if (user != null) {
+//
+////            kafkaTemplate.send(TOPIC_NAME, user.getId());
+//
+//            // Функ отправка в очередь (RABBIT MQ SCS)
+////            messageFuncActions.sendNewUserMessage(user.getId());
+//
+//            // Legacy отправка в очередь (RABBIT MQ SCS)
+////            messageProducer.newUserAction(user.getId());
+//
+//            //заполняем начальные данные пользователя (в параллелном потоке)
+////            userWebClientBuilder.initUserData(user.getId()).subscribe(result -> {
+////                        System.out.println("user populated: " + result);
+////                    }
+////            );
+//        }
+//
+//        return ResponseEntity.ok(userResponse); // возвращаем созданный объект со сгенерированным id
+//    }
 
     // обновление
     @PutMapping("/update")
@@ -165,7 +193,7 @@ public class ManageUserController {
 
 
         // save работает как на добавление, так и на обновление
-        userService.update(user);
+//        userService.update(user);//TODO
 
         return new ResponseEntity(HttpStatus.OK); // просто отправляем статус 200 (операция прошла успешно)
 
@@ -179,7 +207,7 @@ public class ManageUserController {
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
         try {
-            userService.deleteByUserId(userId);
+//            userService.deleteByUserId(userId);//TODO
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity("userId=" + userId + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -194,7 +222,7 @@ public class ManageUserController {
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
         try {
-            userService.deleteByUserEmail(email);
+//            userService.deleteByUserEmail(email);//TODO
         } catch (EmptyResultDataAccessException e) {
             e.printStackTrace();
             return new ResponseEntity("email=" + email + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -207,17 +235,17 @@ public class ManageUserController {
     @PostMapping("/id")
     public ResponseEntity<User> findById(@RequestBody Long id) {
 
-        Optional<User> userOptional = userService.findById(id);
+//        Optional<User> userOptional = userService.findById(id);//TODO
 
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
-        try {
-            if (userOptional.isPresent()) {
-                return ResponseEntity.ok(userOptional.get());
-            }
-        } catch (NoSuchElementException e) { // если объект не будет найден
-            e.printStackTrace();
-        }
+//        try {
+//            if (userOptional.isPresent()) {
+//                return ResponseEntity.ok(userOptional.get());
+//            }
+//        } catch (NoSuchElementException e) { // если объект не будет найден
+//            e.printStackTrace();
+//        }
 
         return new ResponseEntity("id=" + id + " not found", HttpStatus.NOT_ACCEPTABLE);
     }
@@ -231,7 +259,7 @@ public class ManageUserController {
         // можно обойтись и без try-catch, тогда будет возвращаться полная ошибка (stacktrace)
         // здесь показан пример, как можно обрабатывать исключение и отправлять свой текст/статус
         try {
-            user = userService.findByEmail(email);
+//            user = userService.findByEmail(email);//TODO
         } catch (NoSuchElementException e) { // если объект не будет найден
             e.printStackTrace();
             return new ResponseEntity("email=" + email + " not found", HttpStatus.NOT_ACCEPTABLE);
@@ -280,10 +308,10 @@ public class ManageUserController {
         PageRequest pageRequest = PageRequest.of(pageNumber, pageSize, sort);
 
         // результат запроса с постраничным выводом
-        Page<User> result = userService.findByParams(email, username, pageRequest);
+//        Page<User> result = userService.findByParams(email, username, pageRequest);//TODO
 
         // результат запроса
-        return ResponseEntity.ok(result);
+        return ResponseEntity.ok(null);
 
     }
 

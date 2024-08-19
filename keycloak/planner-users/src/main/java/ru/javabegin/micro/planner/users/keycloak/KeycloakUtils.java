@@ -1,5 +1,6 @@
 package ru.javabegin.micro.planner.users.keycloak;
 
+import jakarta.annotation.PostConstruct;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
@@ -10,7 +11,6 @@ import org.keycloak.representations.idm.CredentialRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import ru.javabegin.micro.planner.entity.User;
 import ru.javabegin.micro.planner.users.dto.UserDTO;
 
 import java.util.Collections;
@@ -30,26 +30,28 @@ public class KeycloakUtils {
 
     // Ссылка на единственный экземпляр объекта KC
     private static Keycloak keycloak;
+    private static RealmResource realmResource; // доступ к API realm
+    private static UsersResource usersResource;   // доступ к API для работы с пользователями
 
-    public Keycloak getInstance() {
-        if (keycloak == null) {
-            Keycloak kc = KeycloakBuilder.builder()
-                    .serverUrl(serverUrl)
-                    .realm(realm)
-                    .clientId(resourceClientId)
-                    .clientSecret(clientSecret)
-                    .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
-                    .build();
-            return kc;
-        }
-        return keycloak;
+    @PostConstruct
+    public void initKeycloak() {
+        keycloak = KeycloakBuilder.builder()
+                .serverUrl(serverUrl)
+                .realm(realm)
+                .clientId(resourceClientId)
+                .clientSecret(clientSecret)
+                .grantType(OAuth2Constants.CLIENT_CREDENTIALS)
+
+                .build();
+        realmResource = keycloak.realm(realm);
+        usersResource = realmResource.users();
     }
 
     public Response createKeycloakUser(UserDTO user, List<String> roles) {
         // Доступ к realm API
-        RealmResource realmResource = getInstance().realm(realm);
+//        RealmResource realmResource = getInstance().realm(realm);
         // Доступ к API для работы с пользователями
-        UsersResource usersResource = realmResource.users();
+//        UsersResource usersResource = realmResource.users();
         // Данные пароля - спец. объект-контейнер
         CredentialRepresentation credentialRepresentation = createCredentialRepresentation(user.getPassword());
 
@@ -64,6 +66,11 @@ public class KeycloakUtils {
 
         return usersResource.create(kcUser);
     }
+
+    public List<UserRepresentation> getAll() {
+        return usersResource.searchByAttributes("vshulpov@gmail.com");
+    }
+
 
     private CredentialRepresentation createCredentialRepresentation(String password) {
         CredentialRepresentation passwordRepresentation = new CredentialRepresentation();
