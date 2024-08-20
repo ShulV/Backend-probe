@@ -9,6 +9,7 @@ import ru.javabegin.micro.planner.users.keycloak.KeycloakUtils;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 
 // всегда нужно создавать отдельный класс Service для доступа к данным, даже если кажется,
 // что мало методов или это все можно реализовать сразу в контроллере
@@ -43,6 +44,10 @@ public class UserService {
             System.out.println(e);// test
             return null;
         }
+    }
+
+    public void addRoles(UUID userId, List<String> roles) {
+        keycloakUtils.addRoles(userId.toString(), roles);
     }
 
     public List<UserRepresentation> getAll() {

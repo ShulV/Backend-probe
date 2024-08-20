@@ -173,3 +173,20 @@ https://www.keycloak.org/docs/latest/securing_apps/index.html#_spring_boot_adapt
 не нужно писать свой конвертер – все роли считываются автоматически
 приложение явно привязано к KeyCloak (обязательно в приложении прописываете URL, realm и пр.)
 настройки защиты URL можно прописывать вне кода (в файле properties)
+
+## application.properties для keycloak sdk
+в файле application-kc.properties в GitHub репозитории должны быть эти настройки
+
+keycloak.auth-server-url=http://localhost:{порт}/
+
+keycloak.resource=user-manage-client
+
+keycloak.realm=todoapp-realm
+
+keycloak.credentials.secret=sKmJxtZqLMsQnw2M6H2cNvG8b9rWludQ
+
+keycloak.use-resource-role-mappings=true
+
+spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:{порт}/realms/todoapp-realm/protocol/openid-connect/certs
+
+{порт} подставляете свой

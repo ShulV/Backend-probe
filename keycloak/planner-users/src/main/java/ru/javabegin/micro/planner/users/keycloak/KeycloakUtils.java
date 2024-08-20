@@ -6,13 +6,16 @@ import org.keycloak.OAuth2Constants;
 import org.keycloak.admin.client.Keycloak;
 import org.keycloak.admin.client.KeycloakBuilder;
 import org.keycloak.admin.client.resource.RealmResource;
+import org.keycloak.admin.client.resource.UserResource;
 import org.keycloak.admin.client.resource.UsersResource;
 import org.keycloak.representations.idm.CredentialRepresentation;
+import org.keycloak.representations.idm.RoleRepresentation;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import ru.javabegin.micro.planner.users.dto.UserDTO;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -67,10 +70,27 @@ public class KeycloakUtils {
         return usersResource.create(kcUser);
     }
 
-    public List<UserRepresentation> getAll() {
-        return usersResource.searchByAttributes("vshulpov@gmail.com");
+    public void addRoles(String userId, List<String> roles) {
+        List<RoleRepresentation> ksRoles = new ArrayList<>();
+
+        roles.forEach(role -> {
+            RoleRepresentation roleRepresentation = realmResource.roles().get(role).toRepresentation();
+            ksRoles.add(roleRepresentation);
+        });
+
+        // Получаем пользователя
+        UserResource uniqueUserResource = usersResource.get(userId);
+
+        // Добавляем ему роли
+        uniqueUserResource.roles().realmLevel().add(ksRoles);
     }
 
+    public List<UserRepresentation> getAll() {
+    // В контроллере в методе search нужно изменить код:
+    // return ResponseEntity.ok(keycloakUtils.searchKeycloakUsers("email:" + email));
+    // тогда он будет понимать по какому именно параметру производим поиск
+        return usersResource.searchByAttributes("vshulpov@gmail.com");
+    }
 
     private CredentialRepresentation createCredentialRepresentation(String password) {
         CredentialRepresentation passwordRepresentation = new CredentialRepresentation();

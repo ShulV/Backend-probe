@@ -27,6 +27,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.javabegin.micro.planner.entity.User;
+import ru.javabegin.micro.planner.users.dto.AddingRolesDTO;
 import ru.javabegin.micro.planner.users.dto.UserDTO;
 import ru.javabegin.micro.planner.users.search.UserSearchValues;
 import ru.javabegin.micro.planner.users.service.UserService;
@@ -124,6 +125,18 @@ public class ManageUserController {
 
         return ResponseEntity.status(HttpStatus.CREATED).body(userId);
     }
+
+    @PostMapping("/add-roles") // Возможно тут не add, а change
+    public ResponseEntity<Object> add(@RequestBody AddingRolesDTO addingRolesDTO) {
+        userService.addRoles(addingRolesDTO.getUserId(), addingRolesDTO.getRoles());
+        return ResponseEntity.status(HttpStatus.CREATED).body("Roles were added......");
+    }
+
+    //TODO update, delete, search не стал реализовывать. Вроде всё просто...
+    //https://javabegin.ru/courses/avtorizaciya-s-pomoshhju-oauth2-predz-na-fevral-2022-g/lessons/drugie-operacii-po-polzovatelju/
+
+
+
 
 //    @PostMapping("/add-with-test-data")
 //    public ResponseEntity<Response> addWithInitData(@RequestBody UserDTO user) {
