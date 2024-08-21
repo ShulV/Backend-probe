@@ -3,7 +3,7 @@ package ru.javabegin.micro.planner.users.service;
 import jakarta.ws.rs.core.Response;
 import org.keycloak.representations.idm.UserRepresentation;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+//import org.springframework.transaction.annotation.Transactional;
 import ru.javabegin.micro.planner.users.dto.UserDTO;
 import ru.javabegin.micro.planner.users.keycloak.KeycloakUtils;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 
 // все методы класса должны выполниться без ошибки, чтобы транзакция завершилась
 // если в методе возникнет исключение - все выполненные операции откатятся (Rollback)
-@Transactional
+//@Transactional
 public class UserService {
 
 //    private final UserRepository repository; // сервис имеет право обращаться к репозиторию (БД)
