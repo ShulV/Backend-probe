@@ -9,6 +9,27 @@
 kc.bat start-dev --http-port=8180
 ```
 
+## HTTPS запуск:
+Указание сертификата и ключа для local разработки
+```shell
+kc.bat start-dev --https-certificate-file="C:\\tmp\\xmap_keypair.cer" --https-certificate-key-file="C:\\tmp\\xmap_keypair.p8.pem" --http-port=8180 --https-port=8443 --hostname=localhost
+```
+P.S. очень много приколов, возможно, придется немного помучиться и почитать ошибки
+
+У серта должно быть:
+X509v3 Subject Alternative Name (SAN):
+email:test-user-altmail@localhost, IP Address:192.168.7.1, DNS:www.example-test.com, URI:http://www.example-test.com, othername: 1.2.3.4::my_test_user, othername: UPN::test_upn_name@localhost
+
+P.S. для прода нужно изменить команду на start-prod и в конфиге добавить эти параметры с путями (они там уже закомментированы)
+конфиг кейклоака
+```shell
+kc.bat start-dev --https-certificate-file="c:\\tmp\xmap_ssl.cer" --https-certificate-key-file="c:\\tmp\xmap_ssl.p8"
+```
+
+Настройка realm – можно поставить обязательность выполнения всех запросов только по HTTPS
+
+---
+
 Чтобы проверить какие порты какими приложениями заняты (Windows):
 ```shell
 netstat -aon
