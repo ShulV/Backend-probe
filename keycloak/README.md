@@ -20,10 +20,12 @@ P.S. очень много приколов, возможно, придется 
 X509v3 Subject Alternative Name (SAN):
 email:test-user-altmail@localhost, IP Address:192.168.7.1, DNS:www.example-test.com, URI:http://www.example-test.com, othername: 1.2.3.4::my_test_user, othername: UPN::test_upn_name@localhost
 
+CN - имя домена
+
 P.S. для прода нужно изменить команду на start-prod и в конфиге добавить эти параметры с путями (они там уже закомментированы)
 конфиг кейклоака
 ```shell
-kc.bat start-dev --https-certificate-file="c:\\tmp\xmap_ssl.cer" --https-certificate-key-file="c:\\tmp\xmap_ssl.p8"
+kc.bat start-dev --https-certificate-file="c:\\tmp\\xmap_cert_new\\localhost.cer" --https-certificate-key-file="c:\\tmp\\xmap_cert_new\\localhost.p8.pem"
 ```
 
 Настройка realm – можно поставить обязательность выполнения всех запросов только по HTTPS
