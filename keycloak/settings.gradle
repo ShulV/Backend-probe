@@ -1,0 +1,10 @@
+rootProject.name = 'keycloak'
+
+includeBuild 'planner-config'
+includeBuild 'planner-gateway'
+includeBuild 'planner-server'
+includeBuild 'planner-entity'
+includeBuild 'planner-todo'
+includeBuild 'planner-utils'
+includeBuild 'planner-users'
+
