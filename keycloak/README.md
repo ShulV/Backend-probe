@@ -25,7 +25,7 @@ CN - имя домена
 P.S. для прода нужно изменить команду на start-prod и в конфиге добавить эти параметры с путями (они там уже закомментированы)
 конфиг кейклоака
 ```shell
-kc.bat start-dev --https-certificate-file="c:\\tmp\\xmap_cert_new\\localhost.cer" --https-certificate-key-file="c:\\tmp\\xmap_cert_new\\localhost.p8.pem"
+kc.bat start-dev --https-certificate-file="c:\\tmp\\xmap_cert_new\\localhost.cer" --https-certificate-key-file="c:\\tmp\\xmap_cert_new\\localhost.p8.pem" --http-port=8180 --https-port=8443 --hostname=localhost
 ```
 
 Настройка realm – можно поставить обязательность выполнения всех запросов только по HTTPS
@@ -213,3 +213,45 @@ keycloak.use-resource-role-mappings=true
 spring.security.oauth2.resourceserver.jwt.jwk-set-uri=http://localhost:{порт}/realms/todoapp-realm/protocol/openid-connect/certs
 
 {порт} подставляете свой
+
+
+## SSL/HTTPS между MC и keycloak, добавление CA для JVM
+Добавляем в JDK (У JDK есть файлы, конфиг, в том числе связанные с сертификатами)
+по дефолту в OpenJDK сборке уже есть файл с большим кол-вом доверенных корневых CA, 
+поэтому на проде таких проблем не должно возникать (когда у нас будет самоподписанный серт)
+
+Чтобы модули Java (микросервисы) могли устанавливать HTTPS соединение с KeyCloak – нужно, 
+чтобы они начали доверять CA сертификату – для этого его нужно добавить в JVM хранилище cacerts
+
+Пример ошибки:
+```
+error on GET request for "https://localhost:8443/realms/todolist-realm/protocol/openid-connect/certs": 
+PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find 
+valid certification path to requested target
+```
+
+Добавляйте именно в тот JVM, который используется для проекта, потому что на компьютере может быть несколько JDK 
+(проверьте, что у вас есть переменная окружения JAVA_HOME, которая указывает на нужный JDK)
+
+Главное помнить, что инициатор запроса – это клиент и он должен доверять сертификату SSL ресурса, куда выполняет запрос 
+(в нашем случае клиент это микросервис, который делает запрос в КК). Поэтому JVM, где запущен микросервис, 
+должен доверять SSL сертификату.
+
+Дефолтный пароль от хранилища cacerts: `changeit`
+
+Здесь важную роль еще играет то, что в SSL сертификате CN=localhost,
+иначе может не заработать связка “микросервис+keycloak по https”
+И KeyCloak должен быть запущен именно с этим SSL сертификатом
+
+https://confluence.atlassian.com/kb/unable-to-connect-to-ssl-services-due-to-pkix-path-building-failed-error-779355358.html
+
+Важное примечания – используйте только OpenJDK, потому что в версиях других вендоров замечались ошибки 
+или вообще ничего не работало.
+
+Проверьте, что у вас для KK (использует переменную JAVA_HOME) 
+и для проектов используется именно OpenJDK с сайта oracle.com
+
+Где лежит JDK на винде?
+C://Users/<user>/.jdks/openjdk-17.0.1/
+
+/lib/security/cacerts - там файл (хранилище JVM для сертификатов, которые она использует при работе)
