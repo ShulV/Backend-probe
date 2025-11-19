@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!-- Форма для отображения капчи -->
+<form action="/validateCaptcha" method="post">
+    <label for="captcha">Введите код с картинки:</label>
+    <img src="/captcha" alt="captcha" />
+    <input type="text" id="captcha" name="captcha" required />
+    <button type="submit">Отправить</button>
+</form>
+</body>
+</html>
