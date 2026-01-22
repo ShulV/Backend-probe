@@ -1,7 +1,6 @@
 package ru.shulpov.testingjunit5.unit;
 
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 import ru.shulpov.testingjunit5.dto.ValidationResult;
@@ -11,9 +10,20 @@ import ru.shulpov.testingjunit5.util.UserValidator;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatException;
 
-public class UserValidatorTests {
+public class UserValidatorBaseTests {
     private final UserValidator validator = new UserValidator();
+
+    @BeforeEach
+    void setUp() {
+        //выполнение перед каждым тестом
+    }
+
+    @BeforeAll
+    public static void init() {
+        //выполнение перед всеми тестами
+    }
 
     @ParameterizedTest(name = "Валидный пользователь: email={0}, возраст={1}")
     @DisplayName("✅ Должен успешно валидировать корректных пользователей")
@@ -92,6 +102,7 @@ public class UserValidatorTests {
                 .isEqualTo(email.matches("^[A-Za-z0-9+_.-]+@([A-Za-z0-9.-]+\\.[A-Za-z]{2,})$") && age >= 18 && age <= 120);
     }
 
+    @Test
     @DisplayName("Null user → ошибки на поле 'user'")
     void nullUserValidation() {
         ValidationResult result = validator.validate(null);
@@ -100,5 +111,11 @@ public class UserValidatorTests {
         assertThat(result.getFieldErrors())
                 .containsEntry("user", List.of("User cannot be null"))
                 .hasSize(1);
+    }
+
+    @Test
+    @DisplayName("Проверка теста с бросанием исключения")
+    void nullUserForNotNullValidation() {
+        Assertions.assertThrows(IllegalArgumentException.class, () -> validator.validateNotNullUser(null));
     }
 }

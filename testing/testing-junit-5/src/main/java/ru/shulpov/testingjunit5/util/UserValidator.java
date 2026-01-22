@@ -44,5 +44,12 @@ public class UserValidator {
 
         return result;
     }
+
+    public boolean validateNotNullUser(User user) {
+        if (user == null) {
+            throw new IllegalArgumentException("User cannot be null");
+        }
+        return isValid(user);
+    }
 }
 
