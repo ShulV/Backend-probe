@@ -1,0 +1,6 @@
+- [x] junit5
+- [ ] mockito
+- [ ] wiremock
+- [ ] JaCoCo (или аналог, что это? Увидеть процент покрытия)
+- [ ] test containers
+- 
