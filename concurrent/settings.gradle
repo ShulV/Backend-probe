@@ -1,0 +1,8 @@
+rootProject.name = 'concurrent'
+include 'async-1'
+include 'completable-future'
+include 'concurrent-1-synchronized'
+include 'concurrent-cache'
+include 'deferred-result'
+include 'RaceConditionProbe'
+include 'volotile-1'
