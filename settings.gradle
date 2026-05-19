@@ -8,3 +8,6 @@ include 'testing:testing-mockito'
 include 'simple-captcha'
 include 'concurrent'
 include 'stream-api'
+
+include 'live-coding'
+include 'live-coding:atm2'
